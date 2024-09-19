@@ -93,4 +93,46 @@ function addEvents(){
 }
 
 //call the initialize function when the window has loaded
-window.onload = initialize;
+//window.onload = initialize; //removed because it was calling intialize function twice.
+
+//Declaring adn assigning new data
+
+function jsAjax(){
+    // Define the data request
+    var request = new Request('data/MegaCities.geojson');
+
+    var myData;
+
+    //basic fetch
+    fetch('data/MegaCities.geojson')
+        .then(function(response){
+            return response.json();
+        }) 
+        //.then(callback)
+        .then(function(response){
+            myData = response;
+
+            //check data
+            console.log(myData)
+        }) 
+    //check data
+    console.log(myData)    
+};
+
+//define conversion callback function
+function conversion(response){
+    //convert data to usable form
+    return response.json();
+  }
+
+//define callback function
+function callback(response){
+    console.log(response)
+	document.querySelector("#mydiv").insertAdjacentHTML('beforeend', '<br>GeoJSON data:<br>' + JSON.stringify(myData))
+
+
+
+document.querySelector("#mydiv").insertAdjacentHTML('beforeend', 'GeoJSON data: ' + JSON.stringify(myData))
+}
+
+window.onload = jsAjax();
