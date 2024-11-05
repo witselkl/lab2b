@@ -1,10 +1,10 @@
-//initialize function called when the script loads
-function initialize(){
+// Initialize function called when the script loads
+function initialize() {
     cities();
 }
 
-// define an array of objects for cities and population
-function cities(){    
+// Define an array of objects for cities and population
+function cities() {    
     var cityPop = [
         { 
             city: 'Madison',
@@ -24,24 +24,22 @@ function cities(){
         }
     ];
 
-    // create a table element
+    // Create a table element
     var table = document.createElement("table");
 
-    // create a header row
+    // Create a header row
     var headerRow = document.createElement("tr");
 
-    //add the "City" and "Population" columns to the header row
-    headerRow.insertAdjacentHTML("beforeend","<th>City</th><th>Population</th>")
+    // Add the "City" and "Population" columns to the header row
+    headerRow.insertAdjacentHTML("beforeend", "<th>City</th><th>Population</th>");
 
-    // add the header row
+    // Add the header row
     table.appendChild(headerRow);
 
-    //loop to add a new row for each city
-    for (var i = 0; i < cityPop.length; i++){
-        //assign longer html strings to a variable
+    // Loop to add a new row for each city
+    for (var i = 0; i < cityPop.length; i++) {
         var rowHtml = "<tr><td>" + cityPop[i].city + "</td><td>" + cityPop[i].population + "</td></tr>";
-        //add the row's html string to the table
-        table.insertAdjacentHTML('beforeend',rowHtml);
+        table.insertAdjacentHTML('beforeend', rowHtml);
     }
 
     document.querySelector("#mydiv").appendChild(table);
@@ -53,16 +51,16 @@ function cities(){
 
 document.addEventListener('DOMContentLoaded', initialize);
 
-//add an if else statement to add a new column
-function addColumns(cityPop){
-    document.querySelectorAll("tr").forEach(function(row, i){
-        if (i == 0){
+// Add an if-else statement to add a new column
+function addColumns(cityPop) {
+    document.querySelectorAll("tr").forEach(function(row, i) {
+        if (i === 0) {
             row.insertAdjacentHTML("beforeend", "<th>City Size</th>");
         } else {
             var citySize;
-            if (cityPop[i-1].population < 100000){
+            if (cityPop[i - 1].population < 100000) {
                 citySize = 'Small';
-            } else if (cityPop[i-1].population < 500000){
+            } else if (cityPop[i - 1].population < 500000) {
                 citySize = 'Medium';
             } else {
                 citySize = 'Large';
@@ -72,13 +70,13 @@ function addColumns(cityPop){
     });
 }
 
-function addEvents(){
-    document.querySelector("table").addEventListener("mouseover", function(){
+function addEvents() {
+    document.querySelector("table").addEventListener("mouseover", function() {
         var color = "rgb(";
-        for (var i = 0; i < 3; i++){
+        for (var i = 0; i < 3; i++) {
             var random = Math.round(Math.random() * 255);
             color += random;
-            if (i < 2){
+            if (i < 2) {
                 color += ",";
             } else {
                 color += ")";
@@ -87,52 +85,37 @@ function addEvents(){
         document.querySelector("table").style.color = color;
     });
 
-    document.querySelector("table").addEventListener("click", function(){
+    document.querySelector("table").addEventListener("click", function() {
         alert('Hey, you clicked me!');
     });
 }
 
-//call the initialize function when the window has loaded
-//window.onload = initialize; //removed because it was calling intialize function twice.
-
-//Declaring adn assigning new data
-
-function jsAjax(){
-    // Define the data request
-    var request = new Request('data/MegaCities.geojson');
-
-    var myData;
-
-    //basic fetch
+// Basic fetch function with callback to handle data
+function jsAjax() {
     fetch('data/MegaCities.geojson')
-        .then(function(response){
+        .then(function(response) {
             return response.json();
         }) 
-        //.then(callback)
-        .then(function(response){
-            myData = response;
-
-            //check data
-            console.log(myData)
-        }) 
-    //check data
-    console.log(myData)    
-};
-
-//define conversion callback function
-function conversion(response){
-    //convert data to usable form
-    return response.json();
-  }
-
-//define callback function
-function callback(response){
-    console.log(response)
-	document.querySelector("#mydiv").insertAdjacentHTML('beforeend', '<br>GeoJSON data:<br>' + JSON.stringify(myData))
-
-
-
-document.querySelector("#mydiv").insertAdjacentHTML('beforeend', 'GeoJSON data: ' + JSON.stringify(myData))
+        .then(function(myData) {
+            console.log(myData); // Log the fetched data
+            callback(myData); // Pass data to the callback
+        })
+        .catch(function(error) {
+            console.log("Error fetching the GeoJSON data:", error);
+        });
 }
 
-window.onload = jsAjax();
+// Define callback function
+function callback(myData) {
+    document.querySelector("#mydiv").insertAdjacentHTML('beforeend', '<br>GeoJSON data:<br>' + JSON.stringify(myData));
+}
+
+// Load the AJAX request when the window has loaded
+window.onload = jsAjax;
+
+
+// Key Fixes:
+// Moved console.log(myData) inside the .then() block of jsAjax() so it logs the data correctly after it’s fetched.
+// Passed myData to the callback() function to handle the data properly and insert it into the DOM.
+// Removed duplicate insertAdjacentHTML() in callback().
+// Added a .catch() block to handle potential errors with the fetch() request.
